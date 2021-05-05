@@ -1,0 +1,60 @@
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+.gaming-table {
+    background-color: green;
+    border: 3px solid brown;
+    padding: 30px 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
+}
+
+.deck {
+    display: flex;
+    justify-content: center;
+}
+
+.dealer-side, .player-side {
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    height: 100%;
+    width: 80px;
+    border: 1px solid #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    padding: 2rem 1.5rem;
+    position: relative;
+    background-color: #fff;
+}
+
+.card::before, .card::after {
+    content: attr(data-card);
+    position: absolute;
+    font-size: 1rem;
+}
+
+.card::before {
+    top: .5rem;
+    left: .5rem;
+}
+
+.card::after {
+    bottom: .5rem;
+    right: .5rem;
+    transform: rotate(180deg);
+}
+
+.card.red {
+    color: red;
+}
+
+.card.black {
+    color: black;
+}
