@@ -21,6 +21,11 @@
     justify-content: center;
 }
 
+.dealer-side .dealer-cards, .player-side .player-cards {
+    display: flex;
+    justify-content: center;
+}
+
 .card {
     height: 100%;
     width: 80px;
