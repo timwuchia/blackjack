@@ -1,7 +1,7 @@
 import Deck, { DealerHand, PlayerHand } from './deck.js';
 
 
-const deck = new Deck();
+let deck = new Deck();
 deck.shuffle();
 const playerHand = new PlayerHand;
 const dealerHand = new DealerHand;
@@ -20,9 +20,15 @@ const playerFaceValue = document.querySelector('.player-side #player-value');
 const hitBtn = document.querySelector('.hit-btn');
 const standBtn = document.querySelector('.stand-btn');
 const newRoundBtn = document.querySelector('.new-round-btn');
+const restartBtn = document.querySelector('.restart-btn');
 const message = document.querySelector('.deck .message');
 
 document.addEventListener("DOMContentLoaded", () => {
+    startRound();
+})
+
+restartBtn.addEventListener("click", () => {
+    deck = new Deck();
     startRound();
 })
 
@@ -89,11 +95,18 @@ const cardFaceValue = (cardValue, aIsOne) => {
 
 const flipDealerCard = () => {
     dealerValue = dealerValue + dealerFaceDownCardValue;
+    const faceDownCard = document.querySelectorAll('.dealer-side .dealer-cards .card')[1]
+    faceDownCard.classList.remove('facedown');
     setDealerFaceValue(dealerValue)
 }
 
 const addCard = (side, card) => {
-    console.log(deck)
+    console.log(deck);
+    if(deck.cards.length < 1) {
+        message.innerHTML = 'sorry, there are no more cards';
+        restartBtn.disabled = false;
+        return;
+    }
     if(side === 'player'){
         playerHand.hand.push(card)
         playerCards.append(card.getHTML());
@@ -138,6 +151,14 @@ newRoundBtn.addEventListener('click', function(){
 })
 
 const startRound = () => {
+    if(deck.cards.length < 4){
+        message.innerHTML = 'sorry, there is no more cards';
+        restartBtn.disabled = false;
+        return;
+    }
+    message.innerHTML = "";
+    restartBtn.disabled = true;
+    newRoundBtn.disabled = true;
     const initDealerCard = deck.popTwoCards();
     const initPlayerCard = deck.popTwoCards();
     // initDealerCard.map((item) => {
@@ -150,6 +171,8 @@ const startRound = () => {
     })
     addCard('dealer', initDealerCard[0]);
     addCard('dealer', initDealerCard[1]);
+    const faceDownCard = document.querySelectorAll('.dealer-side .dealer-cards .card')[1]
+    faceDownCard.classList.add('facedown');
     dealerValue = dealerValue + cardFaceValue(dealerHand.hand[0].value, false);
     setDealerFaceValue(dealerValue)
     dealerFaceDownCardValue = cardFaceValue(dealerHand.hand[1].value, false);
@@ -205,7 +228,14 @@ standBtn.addEventListener('click', async () => {
             dealerValue = dealerValue - 10;
             dealerASetToOne = true;
             setDealerFaceValue(dealerValue);
-            await addCardToDealer(true);
+            while(dealerValue < 17 || dealerValue < playerValue){
+                const addedCard = deck.popCard();
+                addCard('dealer', addedCard);
+                dealerValue = dealerValue + cardFaceValue(addedCard.value, false);
+                setDealerFaceValue(dealerValue)
+                // addingCardToDealer()
+                await sleep(1500)
+            }
             if(dealerValue > 21) {
                 playerWon();
                 enableButton('new-round');

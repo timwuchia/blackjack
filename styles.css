@@ -4,7 +4,8 @@
 .gaming-table {
     background-color: green;
     border: 3px solid brown;
-    padding: 30px 300px;
+    width: 100%;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -14,6 +15,24 @@
 .deck {
     display: flex;
     justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.deck .deck-cards {
+    height: 110px;
+    width: 80px;
+    border: 2px solid brown;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    padding: 2rem 1.5rem;
+    position: relative;
+    background-color: #000;
+}
+
+.dealer-side {
+    margin-bottom: 1rem;
 }
 
 .dealer-side, .player-side {
@@ -24,6 +43,22 @@
 .dealer-side .dealer-cards, .player-side .player-cards {
     display: flex;
     justify-content: center;
+}
+
+.dealer-side .dealer-cards .facedown {
+    position: relative;
+}
+
+.dealer-side .dealer-cards .facedown::after {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    right: 0;
+    background-color: black;
+    border: 2px solid brown;
+    bottom: 0;
+    content: "";
 }
 
 .card {
