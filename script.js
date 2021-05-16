@@ -1,4 +1,5 @@
 import Deck, { DealerHand, PlayerHand } from './deck.js';
+import { cardFaceValue, handHasA, setDealerFaceValue, setPlayerFaceValue, playerLost, playerWon, tieGame } from './helpers.js'
 
 
 let deck = new Deck();
@@ -15,8 +16,7 @@ const dealerDeck = document.querySelector('.dealer-side');
 const playerDeck = document.querySelector('.player-side');
 const dealerCards = document.querySelector('.dealer-side .dealer-cards');
 const playerCards = document.querySelector('.player-side .player-cards');
-const dealerFaceValue = document.querySelector('.dealer-side #dealer-value');
-const playerFaceValue = document.querySelector('.player-side #player-value');
+
 const hitBtn = document.querySelector('.hit-btn');
 const standBtn = document.querySelector('.stand-btn');
 const newRoundBtn = document.querySelector('.new-round-btn');
@@ -31,67 +31,6 @@ restartBtn.addEventListener("click", () => {
     deck = new Deck();
     startRound();
 })
-
-const setDealerFaceValue = (value) => {
-    dealerFaceValue.innerHTML = value;
-}
-
-const setPlayerFaceValue = (value) => {
-    playerFaceValue.innerHTML = value;
-}
-
-
-
-
-const playerLost = () => {
-    message.innerHTML = 'Sorry, you lost';
-}
-
-const playerWon = () => {
-    message.innerHTML = "You won!!";
-}
-
-const tieGame = () => {
-    message.innerHTML = "It's a tie!!";
-}
-
-const cardFaceValue = (cardValue, aIsOne) => {
-    switch(cardValue){
-        case "A":
-            return !aIsOne ? 11 : 1;
-            break;
-        case "2":
-            return 2;
-            break;
-        case "3":
-            return 3;
-            break;
-        case "4":
-            return 4;
-            break;
-        case "5":
-            return 5;
-            break;
-        case "6":
-            return 6;
-            break;
-        case "7":
-            return 7;
-            break;
-        case "8":
-            return 8;
-            break;
-        case "9":
-            return 9;
-            break;
-        case "10":
-        case "J":
-        case "Q":
-        case "K":
-            return 10;
-            break;
-    }
-}
 
 const flipDealerCard = () => {
     dealerValue = dealerValue + dealerFaceDownCardValue;
@@ -151,6 +90,8 @@ newRoundBtn.addEventListener('click', function(){
 })
 
 const startRound = () => {
+    hitBtn.disabled = false;
+    standBtn.disabled = false;
     if(deck.cards.length < 4){
         message.innerHTML = 'sorry, there is no more cards';
         restartBtn.disabled = false;
@@ -161,9 +102,7 @@ const startRound = () => {
     newRoundBtn.disabled = true;
     const initDealerCard = deck.popTwoCards();
     const initPlayerCard = deck.popTwoCards();
-    // initDealerCard.map((item) => {
-    //     addCard('dealer', item);
-    // })
+
     initPlayerCard.map((item) => {
         addCard('player', item);
         playerValue = playerValue + cardFaceValue(item.value, false);
@@ -191,25 +130,17 @@ hitBtn.addEventListener('click', () => {
             return;
         }
         playerLost();
+        hitBtn.disabled = true;
+        standBtn.disabled = true;
         enableButton('new-round');
         return;
     }
 })
 
-const handHasA = (hand) => {
-    for(let i = 0; i < hand.length; i++){
-        if(hand[i].value === "A") return true;
-    }
-    return false;
-}
-
-setTimeout(() => {
-    handHasA(playerHand.hand)
-}, 1000)
-
-
 standBtn.addEventListener('click', async () => {
     flipDealerCard();
+    hitBtn.disabled = true;
+    standBtn.disabled = true;
     const sleep = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms))
     }
@@ -241,6 +172,9 @@ standBtn.addEventListener('click', async () => {
                 enableButton('new-round');
                 return;
             }
+            if(dealerValue == playerValue){
+                tieGame();
+            }
             if(dealerValue < playerValue) {
                 playerWon();
                 enableButton('new-round');
@@ -252,6 +186,9 @@ standBtn.addEventListener('click', async () => {
             enableButton('new-round');
             return
         }
+    }
+    if(dealerValue == playerValue){
+        tieGame();
     }
     playerLost();
     enableButton('new-round');
